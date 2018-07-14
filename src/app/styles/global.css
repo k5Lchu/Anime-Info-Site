@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    background-color: #E4F1F6;
+}
+
+body > section {
+    height: 100vh;
+}
+
+img {
+    display: block;
+}

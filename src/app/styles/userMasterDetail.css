@@ -1,0 +1,132 @@
+.userMasterDetailWrapper {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    height: 100%;
+    width: 100%;
+}
+
+/* The styles for master side nav for user console */
+.masterSideNav {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    background-color: rgb(255, 100, 0);
+    box-shadow: 2px 0px 1px 0px #888888;
+    position: relative;
+}
+
+.sideNavHeader {
+    width: 100%;
+    margin-top: 60px;
+}
+
+.sideNavList {
+    list-style: none;
+    padding: 0;
+}
+
+.sideNavTab {
+    font-family: Trebuchet MS;
+    font-size: 1.5em;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    padding: 10px;
+}
+
+.sideNavTabInactive {
+    color: white;
+}
+
+.sideNavTabActive {
+    background-color: rgba(255, 174, 0, 0.76);
+    color: black;
+}
+
+.sideNavList li:hover {
+    cursor: pointer;
+    background-color: rgba(255, 174, 0, 0.76);
+    color: black;
+}
+
+.sideNavList div {
+    width: 25px;
+    height: 25px;
+    background-size: cover;
+    margin: auto;
+}
+
+.myAnimeIcon {
+    background-image: url('../../public/images/bookmark_white.png');
+}
+
+.sideNavList li:hover .myAnimeIcon {
+    background-image: url('../../public/images/bookmark.png');
+}
+
+.myAnimeIconActive {
+    background-image: url('../../public/images/bookmark.png');
+}
+
+.trendingIcon {
+    background-image: url('../../public/images/trending_white.png');
+}
+
+.sideNavList li:hover .trendingIcon {
+    background-image: url('../../public/images/trending.png');
+}
+
+.trendingIconActive {
+    background-image: url('../../public/images/trending.png');
+}
+
+.newAnimeIcon {
+    background-image: url('../../public/images/new_white.png');
+}
+
+.sideNavList li:hover .newAnimeIcon {
+    background-image: url('../../public/images/new.png');
+}
+
+.newAnimeIconActive {
+    background-image: url('../../public/images/new.png');
+}
+
+.sideNavTitle {
+    font-family: Trebuchet MS;
+    font-size: 1.5em;
+    margin: 15px 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(255, 223, 155);
+    color: rgb(255, 223, 155);
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    line-height: 40px;
+}
+
+.sideNavTitle img {
+    width: 40px;
+    margin: auto;
+    border-radius: 50%;
+}
+
+.footer {
+    width: 100%;
+    font-family: Trebuchet MS;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+/* The styles for the detail portion of user console */
+
+.detailWrapper {
+    width: 100%;
+    padding-top: 60px;
+}
+
+.detailList {
+    list-style-type: none;
+}

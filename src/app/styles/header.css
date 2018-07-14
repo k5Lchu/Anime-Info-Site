@@ -1,0 +1,126 @@
+.wrapper {
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    margin: auto;
+    background-color: #1A3E4C;
+    z-index: 2;
+}
+
+.accentBar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5px;
+    background-color: #67AFCB;
+    clear: both;
+}
+
+.interactIcons {
+    width: 30px;
+    height: 30px;
+    margin: 13px;
+}
+
+.profileNavIcons {
+    width: 15px;
+    height: 15px;
+    margin: auto;
+}
+
+.innerWrapper img:hover {
+    cursor: pointer;
+}
+
+.homeIcon {
+    float: left;
+}
+
+.profileIcon {
+    float: right;
+}
+
+.searchIcon {
+    float: right;
+}
+
+.settingsIcon {
+    background-image: url('../../public/images/settings.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.logoutIcon {
+    background-image: url('../../public/images/logout.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.innerWrapper {
+    width: 70%;
+    margin: auto;
+    height: inherit;
+}
+
+.logo {
+    height: 40px;
+    margin: 8px;
+    float: left;
+}
+
+.verticalSeperator {
+    background-color: #6c6c6d;
+    width: 1px;
+    float: left;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.profileNavAreaWrapper {
+    position: relative;
+    float: right;
+    width: 30px;
+    margin-left: 30px;
+}
+
+.profileNavWrapper {
+    position: absolute;
+    width: 120px;
+    height: inherit;
+    bottom: -90px;
+    left: -55px;
+    margin: 0;
+}
+
+.profileNav {
+    list-style: none;
+    text-align: center;
+    padding: 10px 0px;
+    margin: 0px;
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px 1px #c4c4c4;
+}
+
+.profileNav li {
+    height: 30px;
+    line-height: 30px;
+    font-family: Trebuchet MS;
+    display: grid;
+    grid-template-columns: 1fr 2.5fr;
+}
+
+.profileNav li:hover {
+    cursor: pointer;
+    background-color: #347B98;
+    color: white;
+}
+
+.profileNav:first-child li:first-child:hover div {
+    background-image: url('../../public/images/settings_white.png');
+}
+
+.profileNav:first-child li:nth-child(2):hover div {
+    background-image: url('../../public/images/logout_white.png');
+}
