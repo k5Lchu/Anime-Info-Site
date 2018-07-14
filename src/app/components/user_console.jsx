@@ -15,6 +15,9 @@ const toMultiClassString = (...classStrings) => {
     });
 };
 
+/*
+ * Header componenets that serves as the nav bar for the user console
+ */
 class ConsoleNavHeader extends React.Component {
     constructor(props) {
         super(props);
