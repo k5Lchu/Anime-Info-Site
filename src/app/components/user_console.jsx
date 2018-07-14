@@ -3,6 +3,7 @@ import React from 'react';
 import headerStyles from '../styles/header.css';
 import userMasterDetailStyles from '../styles/userMasterDetail.css';
 
+// importing the necessary image files
 import logoIcon from '../../public/images/logo.png';
 import homeIcon from '../../public/images/baseline_home_white_48dp.png';
 import defaultProfileIcon from '../../public/images/baseline_account_circle_white_48dp.png';
