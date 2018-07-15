@@ -1,7 +1,12 @@
 import React from 'react';
 
 import headerStyles from '../styles/header.css';
-import userMasterDetailStyles from '../styles/userMasterDetail.css';
+import userMasterDetailStyles from '../styles/user_master_detail.css';
+
+import sideNavConstants from '../constants/user_console_constants.js';
+import anilistApiConstants from '../constants/anilist_api_constants.js';
+
+import api from '../api/anilist_api.js';
 
 // importing the necessary image files
 import logoIcon from '../../public/images/logo.png';
@@ -90,14 +95,69 @@ class ConsoleNavHeader extends React.Component {
 class UserContentDetail extends React.Component {
     constructor(props) {
         super(props);
+        this.state ={
+            page: 1,
+            perPage: 15,
+            animes: [],
+        };
+
+        this.startApiRequests = this.startApiRequests.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
+        this.handleData = this.handleData.bind(this);
+        this.handleError = this.handleError.bind(this);
+    }
+
+    componentDidMount() {
+        this.startApiRequests();
+    }
+
+    componentDidUpdate() {
+        this.startApiRequests();
+    }
+
+    startApiRequests() {
+        let currSeason = anilistApiConstants.SEASON_SUMMER;
+        let currSeasonYear = 2018;
+
+        let resultPromise = null;
+        switch(this.props.currTab) {
+            case sideNavConstants.SIDE_NAV_TAB_MY_ANIME:
+                resultPromise = api.getMyAnimes(this.props.myAnimeIds, this.state.page, this.state.perPage);
+                break;
+            case sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME:
+                resultPromise = api.getPopularAnimes(this.state.page, this.state.perPage);
+                break;
+            case sideNavConstants.SIDE_NAV_TAB_NEW_ANIME:
+                resultPromise = api.getNewAnimes(currSeason, currSeasonYear, this.state.page, this.state.perPage);
+                break;
+        }
+
+        resultPromise.then(this.handleResponse)
+            .then(this.handleData)
+            .catch(this.handleError);
+    }
+
+    handleResponse(response) {
+        return response.json().then(function (json) {
+            return response.ok ? json : Promise.reject(json);
+        });
+    }
+    
+    handleData(data) {
+        console.log(data);
+    }
+    
+    handleError(error) {
+        alert('Error, check console');
+        console.error(error);
     }
 
     render() {
         return(
             <div className={userMasterDetailStyles.detailWrapper}>
                 <ul className={userMasterDetailStyles.detailList}>
-                    <li>Item1</li>
-                    <li>Item1</li>
+                    <li>{this.props.currTab}</li>
+                    <li>{this.props.myAnimeIds}}</li>
                     <li>Item1</li>
                     <li>Item1</li>
                     <li>Item1</li>
@@ -121,7 +181,7 @@ class UserContentMaster extends React.Component {
             userMasterDetailStyles.trendingIcon, 
             userMasterDetailStyles.newAnimeIcon];
         this.state = {
-            selected: 'myanime',
+            selected: sideNavConstants.SIDE_NAV_TAB_MY_ANIME,
             liClassStrings: liClassStartStrings,
             iconClassStrings: iconClassStartStrings
         };
@@ -157,15 +217,15 @@ class UserContentMaster extends React.Component {
         let activeIconString = '';
 
         switch(selectedTabName) {
-            case 'myanime':
+            case sideNavConstants.SIDE_NAV_TAB_MY_ANIME:
                 activeIndx = 0;
                 activeIconString = userMasterDetailStyles.myAnimeIconActive;
                 break;
-            case 'trendanime':
+            case sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME:
                 activeIndx = 1;
                 activeIconString = userMasterDetailStyles.trendingIconActive;
                 break;
-            case 'newanime':
+            case sideNavConstants.SIDE_NAV_TAB_NEW_ANIME:
                 activeIndx = 2;
                 activeIconString = userMasterDetailStyles.newAnimeIconActive;
                 break;
@@ -190,13 +250,13 @@ class UserContentMaster extends React.Component {
                     <img className={userMasterDetailStyles.sideNavHeader} src="https://media.giphy.com/media/b29IZK1dP4aWs/giphy.gif"/>
                     <div className={userMasterDetailStyles.sideNavTitle}><img src={navLogo}/>Navigation</div>
                     <ul className={userMasterDetailStyles.sideNavList}> 
-                        <li name="myanime" className={this.state.liClassStrings[0]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[0]}></div>My Animes</li>
-                        <li name="trendanime" className={this.state.liClassStrings[1]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[1]}></div>Trending Animes</li>
-                        <li name="newanime" className={this.state.liClassStrings[2]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[2]}></div>New Animes</li>
+                        <li name={sideNavConstants.SIDE_NAV_TAB_MY_ANIME} className={this.state.liClassStrings[0]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[0]}></div>My Animes</li>
+                        <li name={sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME} className={this.state.liClassStrings[1]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[1]}></div>Popular Animes</li>
+                        <li name={sideNavConstants.SIDE_NAV_TAB_NEW_ANIME} className={this.state.liClassStrings[2]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[2]}></div>New Animes</li>
                     </ul>
                     <div className={userMasterDetailStyles.footer}>Some Copyright @ Shit 2018</div>
                 </div>
-                <UserContentDetail/>
+                <UserContentDetail currTab={this.state.selected} myAnimeIds={[]}/>
             </div>
         );
     }
