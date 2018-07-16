@@ -92,6 +92,50 @@ class ConsoleNavHeader extends React.Component {
     }
 };
 
+class AnimeCard extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            timeUntilNextEpisode: props.nextAiringEpisode.timeUntilAiring
+        };
+
+        this.getNextEipsodeTimeUntilString = this.getNextEipsodeTimeUntilString.bind(this);
+    }
+
+    secondsToTimeString(timeUntil) {
+        timeUntil = Number(timeUntil);
+        var h = Math.floor(d / 3600);
+        var m = Math.floor(d % 3600 / 60);
+
+        var hDisplay = h > 0 ? h + 'hr' : '';
+        var mDisplay = m > 0 ? m + 'm' : '';
+        return hDisplay + mDisplay; 
+    }
+
+    getNextEipsodeTimeUntilString() {
+        if (this.props.status === anilistApiConstants.STATUS_RELEASING) {
+            return this.secondsToTimeString(this.state.timeUntilNextEpisode);
+        }
+        else {
+            return this.props.season + ' ' + this.props.startDate.year;
+        }
+    }
+
+    render() {
+        return(
+            <a href={this.props.siteUrl}>
+                <div>
+                    <h6>{this.props.title.romaji}</h6>
+                    <h6>{this.getNextEipsodeTimeUntilString()}</h6>
+                    <img src={this.props.coverImage}/>
+                    <p>{this.props.description}</p>
+                    <p>{this.props.genres.reduce((prev, curr) => {prev + ', ' + curr;})}</p>
+                </div>
+            </a>
+        );
+    }
+}
+
 class UserContentDetail extends React.Component {
     constructor(props) {
         super(props);

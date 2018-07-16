@@ -22,6 +22,10 @@ module.exports = {
                     }
                     genres
                     description
+                    season
+                    startDate {
+                      year
+                    }
                     nextAiringEpisode {
                         timeUntilAiring
                         episode
@@ -52,6 +56,10 @@ module.exports = {
                 }
                 genres
                 description
+                season
+                startDate {
+                  year
+                }
                 nextAiringEpisode {
                   timeUntilAiring
                   episode
@@ -82,6 +90,10 @@ module.exports = {
                 }
                 genres
                 description
+                season
+                startDate {
+                  year
+                }
                 nextAiringEpisode {
                   timeUntilAiring
                   episode
@@ -112,6 +124,10 @@ module.exports = {
                 }
                 genres
                 description
+                season
+                startDate {
+                  year
+                }
                 nextAiringEpisode {
                   timeUntilAiring
                   episode
@@ -142,6 +158,10 @@ module.exports = {
                 }
                 genres
                 description
+                season
+                startDate {
+                  year
+                }
                 nextAiringEpisode {
                   timeUntilAiring
                   episode
@@ -172,6 +192,10 @@ module.exports = {
                 }
                 genres
                 description
+                season
+                startDate {
+                  year
+                }
                 nextAiringEpisode {
                   timeUntilAiring
                   episode
@@ -183,5 +207,9 @@ module.exports = {
     SEASON_SPRING: 'Sp',
     SEASON_SUMMER: 'Su',
     SEASON_FALL: 'Fa',
+    STATUS_FINISHED: "FINISHED",
+    STATUS_RELEASING: "RELEASING",
+    STATUS_NOY_YET_RELEASED: "NOT_YET_RELEASED",
+    STATUS_CANCELLED: "CANCELLED",
     API_ENDPOINT_URL: 'https://graphql.anilist.co'
 };
