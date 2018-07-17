@@ -124,11 +124,70 @@
 
 .detailWrapper {
     width: 100%;
+    height: 100vh;
     padding-top: 60px;
+    box-sizing: border-box;
+    overflow: auto;
 }
 
 .detailList {
-    list-style-type: none;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+}
+
+.animeCardLinkContainer {
+    margin: 50px;
+    box-sizing: border-box;
+    width: 400px;
+    height: 390px;
+    border: 1px solid red;
+}
+
+.animeCardContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 30px 30x 300px 30px;
+    width: inherit;
+    height: inherit;
+    font-family: 'Trebuchet MS';
+}
+
+.cardTitle {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    margin: 0;
+}
+
+.cardTime {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    margin: 0;
+}
+
+.cardImage {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+    height: 300px;
+    object-fit: cover;
+}
+
+.cardDescription {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+    overflow: hidden;
+}
+
+.cardDescription:hover {
+    overflow: auto;
+}
+
+.cardGenres {
+    grid-column: 1 / 3;
+    grid-row: 4 / 5;
 }

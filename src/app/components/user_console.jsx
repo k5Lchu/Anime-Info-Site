@@ -92,49 +92,41 @@ class ConsoleNavHeader extends React.Component {
     }
 };
 
-class AnimeCard extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            timeUntilNextEpisode: props.nextAiringEpisode.timeUntilAiring
-        };
+const AnimeCard = (props) => {
 
-        this.getNextEipsodeTimeUntilString = this.getNextEipsodeTimeUntilString.bind(this);
-    }
+    let secondsToTimeString = (timeSecondsUntil) => {
+        timeSecondsUntil = Number(timeSecondsUntil);
+        let d = Math.floor(timeSecondsUntil / (3600*24));
+        let h = Math.floor(timeSecondsUntil % (3600*24) / 3600);
+        let m = Math.floor(timeSecondsUntil % (3600*24) % 3600 / 60);
 
-    secondsToTimeString(timeUntil) {
-        timeUntil = Number(timeUntil);
-        var h = Math.floor(d / 3600);
-        var m = Math.floor(d % 3600 / 60);
+        let dDisplay = d > 0 ? d + 'd ' : '';
+        let hDisplay = h > 0 ? h + 'hr ' : '';
+        let mDisplay = m > 0 ? m + 'm ' : '';
+        return dDisplay + hDisplay + mDisplay; 
+    };
 
-        var hDisplay = h > 0 ? h + 'hr' : '';
-        var mDisplay = m > 0 ? m + 'm' : '';
-        return hDisplay + mDisplay; 
-    }
-
-    getNextEipsodeTimeUntilString() {
-        if (this.props.status === anilistApiConstants.STATUS_RELEASING) {
-            return this.secondsToTimeString(this.state.timeUntilNextEpisode);
+    let getNextEpisodeTimeUntilString = () => {
+        if (props.status === anilistApiConstants.STATUS_RELEASING) {
+            return 'Ep ' + props.nextAiringEpisode.episode + ' - ' + secondsToTimeString(props.nextAiringEpisode.timeUntilAiring);
         }
         else {
-            return this.props.season + ' ' + this.props.startDate.year;
+            return props.season + ' ' + props.startDate.year;
         }
-    }
+    };
 
-    render() {
-        return(
-            <a href={this.props.siteUrl}>
-                <div>
-                    <h6>{this.props.title.romaji}</h6>
-                    <h6>{this.getNextEipsodeTimeUntilString()}</h6>
-                    <img src={this.props.coverImage}/>
-                    <p>{this.props.description}</p>
-                    <p>{this.props.genres.reduce((prev, curr) => {prev + ', ' + curr;})}</p>
-                </div>
-            </a>
-        );
-    }
-}
+    return(
+        <a className={userMasterDetailStyles.animeCardLinkContainer} href={props.siteUrl}>
+            <div className={userMasterDetailStyles.animeCardContainer}>
+                <h5 className={userMasterDetailStyles.cardTitle}>{props.title.romaji}</h5>
+                <h5 className={userMasterDetailStyles.cardTime}>{getNextEpisodeTimeUntilString()}</h5>
+                <img className={userMasterDetailStyles.cardImage} src={props.coverImage.large}/>
+                <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
+                <p className={userMasterDetailStyles.cardGenres}>{props.genres.reduce((prev, curr) => {return prev + ', ' + curr;})}</p>
+            </div>
+        </a>
+    );
+};
 
 class UserContentDetail extends React.Component {
     constructor(props) {
@@ -143,6 +135,7 @@ class UserContentDetail extends React.Component {
             page: 1,
             perPage: 15,
             animes: [],
+            currTab: props.currTab
         };
 
         this.startApiRequests = this.startApiRequests.bind(this);
@@ -156,7 +149,9 @@ class UserContentDetail extends React.Component {
     }
 
     componentDidUpdate() {
-        this.startApiRequests();
+        if (this.props.currTab !== this.state.currTab) {
+            this.startApiRequests();
+        }
     }
 
     startApiRequests() {
@@ -188,7 +183,18 @@ class UserContentDetail extends React.Component {
     }
     
     handleData(data) {
-        console.log(data);
+        let results = data.data.Page.media;
+        for (let i = 0; i < results.length; ++i) {
+            if (results[i].nextAiringEpisode == null) {
+                results[i].nextAiringEpisode = {empty: true};
+            }
+        }
+        this.setState({
+            page: 1,
+            perPage: 15,
+            animes: results,
+            currTab: this.props.currTab
+        });
     }
     
     handleError(error) {
@@ -199,17 +205,9 @@ class UserContentDetail extends React.Component {
     render() {
         return(
             <div className={userMasterDetailStyles.detailWrapper}>
-                <ul className={userMasterDetailStyles.detailList}>
-                    <li>{this.props.currTab}</li>
-                    <li>{this.props.myAnimeIds}}</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                    <li>Item1</li>
-                </ul>
+                <div className={userMasterDetailStyles.detailList}>
+                    {this.state.animes.map(anime => <AnimeCard {...anime} key={anime.id} />)}
+                </div>
             </div>
         );
     }

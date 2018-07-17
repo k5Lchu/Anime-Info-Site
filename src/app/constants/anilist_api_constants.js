@@ -18,7 +18,6 @@ module.exports = {
                     siteUrl
                     coverImage {
                         large
-                        medium
                     }
                     genres
                     description
@@ -52,7 +51,6 @@ module.exports = {
                 siteUrl
                 coverImage {
                   large
-                  medium
                 }
                 genres
                 description
@@ -86,7 +84,6 @@ module.exports = {
                 siteUrl
                 coverImage {
                   large
-                  medium
                 }
                 genres
                 description
@@ -120,7 +117,6 @@ module.exports = {
                 siteUrl
                 coverImage {
                   large
-                  medium
                 }
                 genres
                 description
@@ -154,7 +150,6 @@ module.exports = {
                 siteUrl
                 coverImage {
                   large
-                  medium
                 }
                 genres
                 description
@@ -188,7 +183,6 @@ module.exports = {
                 siteUrl
                 coverImage {
                   large
-                  medium
                 }
                 genres
                 description
