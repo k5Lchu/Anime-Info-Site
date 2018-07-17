@@ -115,10 +115,14 @@ const AnimeCard = (props) => {
         }
     };
 
+    let preventDescriptionLink = (e) => {
+        e.preventDefault();
+    };
+
     return(
-        <a className={userMasterDetailStyles.animeCardLinkContainer} href={props.siteUrl}>
+        <a className={userMasterDetailStyles.animeCardLinkContainer} href={props.siteUrl} onClick={preventDescriptionLink}>
             <div className={userMasterDetailStyles.animeCardContainer}>
-                <h5 className={userMasterDetailStyles.cardTitle}>{props.title.romaji}</h5>
+                <h4 className={userMasterDetailStyles.cardTitle}>{props.title.romaji}</h4>
                 <h5 className={userMasterDetailStyles.cardTime}>{getNextEpisodeTimeUntilString()}</h5>
                 <img className={userMasterDetailStyles.cardImage} src={props.coverImage.large}/>
                 <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
