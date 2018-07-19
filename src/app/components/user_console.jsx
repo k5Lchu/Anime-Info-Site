@@ -107,7 +107,7 @@ const AnimeCard = (props) => {
     };
 
     let getNextEpisodeTimeUntilString = () => {
-        if (props.status === anilistApiConstants.STATUS_RELEASING) {
+        if (props.status === anilistApiConstants.STATUS_RELEASING && props.nextAiringEpisode.timeUntilAiring != undefined) {
             return 'Ep ' + props.nextAiringEpisode.episode + ' - ' + secondsToTimeString(props.nextAiringEpisode.timeUntilAiring);
         }
         else {
@@ -119,6 +119,13 @@ const AnimeCard = (props) => {
         e.preventDefault();
     };
 
+    let displayGenres = () => {
+        if (props.genres.length > 0) {
+            return props.genres.reduce((prev, curr) => {return prev + ', ' + curr;});
+        }
+        return 'none';
+    };
+
     return(
         <a className={userMasterDetailStyles.animeCardLinkContainer} href={props.siteUrl} onClick={preventDescriptionLink}>
             <div className={userMasterDetailStyles.animeCardContainer}>
@@ -126,57 +133,84 @@ const AnimeCard = (props) => {
                 <h5 className={userMasterDetailStyles.cardTime}>{getNextEpisodeTimeUntilString()}</h5>
                 <img className={userMasterDetailStyles.cardImage} src={props.coverImage.large}/>
                 <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
-                <p className={userMasterDetailStyles.cardGenres}>{props.genres.reduce((prev, curr) => {return prev + ', ' + curr;})}</p>
+                <p className={userMasterDetailStyles.cardGenres}>{displayGenres()}</p>
             </div>
         </a>
     );
 };
 
-class UserContentDetail extends React.Component {
+class UserContentDetailContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            page: 1,
+            nextPageMyAnime: 1,
+            nextPagePopAnime: 1,
+            nextPageNewAnime: 1,
             perPage: 15,
-            animes: [],
-            currTab: props.currTab
+            myAnimesData: [],
+            popAnimesData: [],
+            newAnimesData: [],
+            loading: true
         };
 
-        this.startApiRequests = this.startApiRequests.bind(this);
-        this.handleResponse = this.handleResponse.bind(this);
-        this.handleData = this.handleData.bind(this);
+        this.getMyAnimeData  = this.getMyAnimeData.bind(this);
+        this.getPopularAnimeData  = this.getPopularAnimeData.bind(this);
+        this.getNewAnimeData  = this.getNewAnimeData.bind(this);
+
+        this.handleMyAnimeData = this.handleMyAnimeData.bind(this);
+        this.handlePopAnimeData = this.handlePopAnimeData.bind(this);
+        this.handleNewAnimeData = this.handleNewAnimeData.bind(this);
+
+        this.prefetchInitialAnimeData = this.prefetchInitialAnimeData.bind(this);
+
+        this.handleInitalData = this.handleInitalData.bind(this);
         this.handleError = this.handleError.bind(this);
+
+        this.chooseDetailData = this.chooseDetailData.bind(this);
+
+        this.onScrollToBottom = this.onScrollToBottom.bind(this);
+        this.onScroll = this.onScroll.bind(this);
+
+        this.throttledOnScroll = this.debounced(200, this.onScrollToBottom);
     }
 
     componentDidMount() {
-        this.startApiRequests();
+        this.prefetchInitialAnimeData();
     }
 
-    componentDidUpdate() {
-        if (this.props.currTab !== this.state.currTab) {
-            this.startApiRequests();
-        }
+    prefetchInitialAnimeData() {
+        let myAnimePromise = api.getMyAnimes(this.props.myAnimeIds, this.state.nextPageMyAnime, this.state.perPage);
+        let popAnimePromise = api.getPopularAnimes(this.state.nextPagePopAnime, this.state.perPage);
+        let newAnimePromise = api.getNewAnimes(anilistApiConstants.SEASON_SUMMER, 2018, this.state.nextPageNewAnime, this.state.perPage);
+
+        Promise.all([myAnimePromise.then(this.handleResponse), 
+            popAnimePromise.then(this.handleResponse), 
+            newAnimePromise.then(this.handleResponse)])
+            .then(this.handleInitalData)
+            .catch(this.handleError);
     }
 
-    startApiRequests() {
-        let currSeason = anilistApiConstants.SEASON_SUMMER;
-        let currSeasonYear = 2018;
-
-        let resultPromise = null;
-        switch(this.props.currTab) {
-            case sideNavConstants.SIDE_NAV_TAB_MY_ANIME:
-                resultPromise = api.getMyAnimes(this.props.myAnimeIds, this.state.page, this.state.perPage);
-                break;
-            case sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME:
-                resultPromise = api.getPopularAnimes(this.state.page, this.state.perPage);
-                break;
-            case sideNavConstants.SIDE_NAV_TAB_NEW_ANIME:
-                resultPromise = api.getNewAnimes(currSeason, currSeasonYear, this.state.page, this.state.perPage);
-                break;
-        }
+    getMyAnimeData() {
+        let resultPromise = api.getMyAnimes(this.props.myAnimeIds, this.state.nextPageMyAnime, this.state.perPage);
 
         resultPromise.then(this.handleResponse)
-            .then(this.handleData)
+            .then(this.handleMyAnimeData)
+            .catch(this.handleError);
+    }
+
+    getPopularAnimeData() {
+        let resultPromise = api.getPopularAnimes(this.state.nextPagePopAnime, this.state.perPage);
+
+        resultPromise.then(this.handleResponse)
+            .then(this.handlePopAnimeData)
+            .catch(this.handleError);
+    }
+
+    getNewAnimeData() {
+        let resultPromise = api.getNewAnimes(anilistApiConstants.SEASON_SUMMER, 2018, this.state.nextPageNewAnime, this.state.perPage);
+
+        resultPromise.then(this.handleResponse)
+            .then(this.handleNewAnimeData)
             .catch(this.handleError);
     }
 
@@ -185,19 +219,68 @@ class UserContentDetail extends React.Component {
             return response.ok ? json : Promise.reject(json);
         });
     }
-    
-    handleData(data) {
-        let results = data.data.Page.media;
-        for (let i = 0; i < results.length; ++i) {
-            if (results[i].nextAiringEpisode == null) {
-                results[i].nextAiringEpisode = {empty: true};
-            }
-        }
+
+    handleInitalData(data) {
+        let myAnimeReuslts = data[0].data.Page.media;
+        let popAnimeResults = data[1].data.Page.media;
+        let newAnimeResults = data[2].data.Page.media;
+        this.removedUndefinedFields(myAnimeReuslts);
+        this.removedUndefinedFields(popAnimeResults);
+        this.removedUndefinedFields(newAnimeResults);
         this.setState({
-            page: 1,
-            perPage: 15,
-            animes: results,
-            currTab: this.props.currTab
+            nextPageMyAnime: this.state.nextPageMyAnime + 1,
+            nextPagePopAnime: this.state.nextPagePopAnime + 1,
+            nextPageNewAnime: this.state.nextPageNewAnime + 1,
+            perPage: this.state.perPage,
+            myAnimesData: myAnimeReuslts,
+            popAnimesData: popAnimeResults,
+            newAnimesData: newAnimeResults,
+            loading: false
+        });
+    }
+
+    handleMyAnimeData(data) {
+        let results = data.data.Page.media;
+        this.removedUndefinedFields(results);
+        this.setState({
+            nextPageMyAnime: this.state.nextPageMyAnime + 1,
+            nextPagePopAnime: this.state.nextPagePopAnime,
+            nextPageNewAnime: this.state.nextPageNewAnime,
+            perPage: this.state.perPage,
+            myAnimesData: [...(this.state.myAnimesData),...results],
+            popAnimesData: this.state.popAnimesData,
+            newAnimesData: this.state.newAnimesData,
+            loading: false
+        });
+    }
+
+    handlePopAnimeData(data) {
+        let results = data.data.Page.media;
+        this.removedUndefinedFields(results);
+        this.setState({
+            nextPageMyAnime: this.state.nextPageMyAnime,
+            nextPagePopAnime: this.state.nextPagePopAnime + 1,
+            nextPageNewAnime: this.state.nextPageNewAnime,
+            perPage: this.state.perPage,
+            myAnimesData: this.state.myAnimesData,
+            popAnimesData: [...(this.state.popAnimesData),...results],
+            newAnimesData: this.state.newAnimesData,
+            loading: false
+        });
+    }
+
+    handleNewAnimeData(data) {
+        let results = data.data.Page.media;
+        this.removedUndefinedFields(results);
+        this.setState({
+            nextPageMyAnime: this.state.nextPageMyAnime,
+            nextPagePopAnime: this.state.nextPagePopAnime,
+            nextPageNewAnime: this.state.nextPageNewAnime + 1,
+            perPage: this.state.perPage,
+            myAnimesData: this.state.myAnimesData,
+            popAnimesData: this.state.popAnimesData,
+            newAnimesData: [...(this.state.newAnimesData),...results],
+            loading: false
         });
     }
     
@@ -206,16 +289,79 @@ class UserContentDetail extends React.Component {
         console.error(error);
     }
 
+    debounced(delay, fn) {
+        let timerId;
+        return (...args) => {
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+            timerId = setTimeout(() => {
+                fn(...args);
+                timerId = null;
+            }, delay);
+        };
+    }
+
+    onScroll(e) {
+        e.persist();
+        this.throttledOnScroll(e);
+    }
+
+    onScrollToBottom(e) {
+        let el = e.target;
+        if (el.className === userMasterDetailStyles.detailWrapper) {
+            if ((el.scrollHeight - el.scrollTop) < 1000 && el.scrollHeight > el.clientHeight) {
+                switch(this.props.currTab) {
+                    case sideNavConstants.SIDE_NAV_TAB_MY_ANIME:
+                        this.getMyAnimeData();
+                        break;
+                    case sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME:
+                        this.getPopularAnimeData();
+                        break;
+                    case sideNavConstants.SIDE_NAV_TAB_NEW_ANIME:
+                        this.getNewAnimeData();
+                        break;
+                }
+            }
+        }
+    }
+
+    removedUndefinedFields(arr) {
+        for (let i = 0; i < arr.length; ++i) {
+            if (arr[i].nextAiringEpisode == null) {
+                arr[i].nextAiringEpisode = {empty: true};
+            }
+            if (arr[i].description == null) {
+                arr[i].description = '';
+            }
+        }
+    }
+
+    chooseDetailData() {
+        switch(this.props.currTab) {
+            case sideNavConstants.SIDE_NAV_TAB_MY_ANIME:
+                return this.state.myAnimesData;
+            case sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME:
+                return this.state.popAnimesData;
+            case sideNavConstants.SIDE_NAV_TAB_NEW_ANIME:
+                return this.state.newAnimesData;
+        }
+    }
+
     render() {
-        return(
-            <div className={userMasterDetailStyles.detailWrapper}>
-                <div className={userMasterDetailStyles.detailList}>
-                    {this.state.animes.map(anime => <AnimeCard {...anime} key={anime.id} />)}
-                </div>
-            </div>
-        );
+        return(<UserContentDetail data={this.chooseDetailData()} setDetailListRef={this.props.setRef} onScrollBottom={this.onScroll}/>);
     }
 }
+
+const UserContentDetail = (props) => {
+    return(
+        <div ref={props.setDetailListRef} className={userMasterDetailStyles.detailWrapper} onScroll={props.onScrollBottom}>
+            <div className={userMasterDetailStyles.detailList}>
+                {props.data.map(anime => <AnimeCard {...anime} key={anime.id} />)}
+            </div>
+        </div>
+    );
+};
 
 class UserContentMaster extends React.Component {
     constructor(props) {
@@ -234,6 +380,11 @@ class UserContentMaster extends React.Component {
         
         this.onSideNavTabClick = this.onSideNavTabClick.bind(this);
         this.changeSelectedTabUI = this.changeSelectedTabUI.bind(this);
+        this.setRef = this.setRef.bind(this);
+    }
+
+    setRef(node) {
+        this.detailListRef = node;
     }
 
     onSideNavTabClick(e) {
@@ -249,7 +400,7 @@ class UserContentMaster extends React.Component {
             selected: targetName,
             liClassStrings: newClassStringsArr[0],
             iconClassStrings: newClassStringsArr[1]
-        });
+        }, () => {this.detailListRef.scrollTo(0,0);});
     }
 
     changeSelectedTabUI(selectedTabName) {
@@ -302,7 +453,7 @@ class UserContentMaster extends React.Component {
                     </ul>
                     <div className={userMasterDetailStyles.footer}>Some Copyright @ Shit 2018</div>
                 </div>
-                <UserContentDetail currTab={this.state.selected} myAnimeIds={[]}/>
+                <UserContentDetailContainer currTab={this.state.selected} myAnimeIds={[]} setRef={this.setRef}/>
             </div>
         );
     }
