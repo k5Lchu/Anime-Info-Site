@@ -132,8 +132,10 @@ const AnimeCard = (props) => {
                 <h4 className={userMasterDetailStyles.cardTitle}>{props.title.romaji}</h4>
                 <h5 className={userMasterDetailStyles.cardTime}>{getNextEpisodeTimeUntilString()}</h5>
                 <img className={userMasterDetailStyles.cardImage} src={props.coverImage.large}/>
-                <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
-                <p className={userMasterDetailStyles.cardGenres}>{displayGenres()}</p>
+                <div className={userMasterDetailStyles.desciprtionGenreWrapper}>
+                    <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
+                    <p className={userMasterDetailStyles.cardGenres}>{displayGenres()}</p>
+                </div>
             </div>
         </a>
     );
