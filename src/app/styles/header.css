@@ -29,7 +29,8 @@
     margin: auto;
 }
 
-.innerWrapper img:hover {
+.innerWrapper img:hover, .settingsIcon, .settingsIconMobile, 
+.logoutIconMobile, .closeMobileHeader  {
     cursor: pointer;
 }
 
@@ -51,11 +52,45 @@
     background-size: contain;
 }
 
+.settingsIconMobile {
+    display: none;
+    background-image: url('../../public/images/settings.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 .logoutIcon {
     background-image: url('../../public/images/logout.png');
     background-repeat: no-repeat;
     background-size: contain;
 }
+
+.logoutIconMobile {
+    display: none;
+    background-image: url('../../public/images/logout.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.closeMobileHeader {
+    display: none;
+    background-image: url('../../public/images/clear_black.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.mobileHeaderNavExpand {
+    display: none;
+    width: 30px;
+    height: 30px;
+    background-color: rgb(43, 109, 134);
+    position: absolute;
+    padding: 10px;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+    border-radius: 5px;
+} 
 
 .innerWrapper {
     width: 70%;
@@ -117,10 +152,65 @@
     color: white;
 }
 
-.profileNav:first-child li:first-child:hover div {
+.profileNav:first-child li:first-child:hover div, .settingsIconMobile {
     background-image: url('../../public/images/settings_white.png');
 }
 
-.profileNav:first-child li:nth-child(2):hover div {
+.profileNav:first-child li:nth-child(2):hover div, .logoutIconMobile {
     background-image: url('../../public/images/logout_white.png');
+}
+
+.closeMobileHeader {
+    background-image: url('../../public/images/clear_white.png');
+}
+
+@media only screen and (max-width: 1400px) {
+    .wrapper {
+        right: 10px;
+        bottom: 10px;
+        width: 150px;
+        height: 100px;
+        background: transparent;
+    }
+
+    .innerWrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 150px;
+        height: 100px;
+        z-index: 2;
+        border-radius: 5px;
+        background-color: rgb(43, 109, 134);
+    }
+    
+    .accentBar, .profileNavAreaWrapper, .logo, .verticalSeperator {
+        display: none;
+    }
+    
+    .interactIcons {
+        margin: auto;
+    }
+
+    .homeIcon, .profileIcon, .searchIcon {
+        clear: both;
+    }
+
+    .settingsIconMobile, .logoutIconMobile, .closeMobileHeader {
+        display: block;
+        margin: auto;
+    }
+
+    .mobileHeaderNavExpand {
+        display: block;
+    }
+
+    .closeMobileHeader {
+        grid-column: 3/4;
+        grid-row: 2/3;
+    }
+
+    .hidden {
+        display: none; 
+    }
 }

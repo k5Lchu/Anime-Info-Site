@@ -14,6 +14,7 @@ import homeIcon from '../../public/images/baseline_home_white_48dp.png';
 import defaultProfileIcon from '../../public/images/baseline_account_circle_white_48dp.png';
 import searchIcon from '../../public/images/baseline_search_white_48dp.png';
 import navLogo from '../../public/images/nav_logo.png';
+import mobileHeaderNavIcon from '../../public/images/menu_white.png';
 
 const toMultiClassString = (...classStrings) => {
     return classStrings.reduce((prev, curr) => {
@@ -28,11 +29,14 @@ class ConsoleNavHeader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            profileNavVisible: false
+            profileNavVisible: false,
+            mobileNavVisible: false
         };
 
         this.toggleProfileNav = this.toggleProfileNav.bind(this);
         this.setRef = this.setRef.bind(this);
+        this.showMobileHeaderNav = this.showMobileHeaderNav.bind(this);
+        this.closeMobileHeaderNav = this.closeMobileHeaderNav.bind(this);
     }
 
     componentDidMount() {
@@ -46,12 +50,15 @@ class ConsoleNavHeader extends React.Component {
     toggleProfileNav(e) {
         if (this.profileIconRef && !this.profileIconRef.contains(e.target)) {
             this.setState({
-                profileNavVisible: false
+                profileNavVisible: false,
+                mobileNavVisible: this.state.mobileNavVisible
+                
             });
         }
         else {
             this.setState({
-                profileNavVisible: !this.state.profileNavVisible
+                profileNavVisible: !this.state.profileNavVisible,
+                mobileNavVisible: this.state.mobileNavVisible
             });
         }
     }
@@ -60,19 +67,41 @@ class ConsoleNavHeader extends React.Component {
         this.profileIconRef = node;
     }
 
+    showMobileHeaderNav() {
+        this.setState({
+            profileNavVisible: this.state.profileNavVisible,
+            mobileNavVisible: true
+        });
+    }
+
+    closeMobileHeaderNav() {
+        this.setState({
+            profileNavVisible: this.state.profileNavVisible,
+            mobileNavVisible: false
+        });
+    }
+
     render() {
         let profileNavVisibleStyle = {
             display: 'none'
         };
 
         if (this.state.profileNavVisible) {
-            profileNavVisibleStyle.display = true;
+            profileNavVisibleStyle.display = 'block';
+        }
+
+        let mobileNavVisibleClassString = headerStyles.hidden;
+        let mobileNavToggleClass = '';
+        if (this.state.mobileNavVisible) {
+            mobileNavVisibleClassString = '';
+            mobileNavToggleClass = headerStyles.hidden;
         }
 
         return(
             <div className={headerStyles.wrapper}>
                 <div className={headerStyles.accentBar}></div>
-                <div className={headerStyles.innerWrapper}>
+                <img className={toMultiClassString(headerStyles.mobileHeaderNavExpand, mobileNavToggleClass)} src={mobileHeaderNavIcon} onClick={this.showMobileHeaderNav}/>
+                <div className={toMultiClassString(headerStyles.innerWrapper, mobileNavVisibleClassString)}>
                     <img className={headerStyles.logo} src={logoIcon}/>
                     <div className={headerStyles.verticalSeperator}></div>
                     <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.homeIcon)} src={homeIcon}/>
@@ -86,6 +115,12 @@ class ConsoleNavHeader extends React.Component {
                         </div>
                     </div>
                     <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.searchIcon)} src={searchIcon}/>
+
+                    <div purpose='settings' className={toMultiClassString(headerStyles.settingsIconMobile,headerStyles.interactIcons)}></div>
+                    <div purpose='logout' className={toMultiClassString(headerStyles.logoutIconMobile,headerStyles.interactIcons)}></div>
+
+                    <div className={toMultiClassString(headerStyles.closeMobileHeader,headerStyles.interactIcons)} onClick={this.closeMobileHeaderNav}></div>
+
                 </div>
             </div>
         );
@@ -351,7 +386,11 @@ class UserContentDetailContainer extends React.Component {
     }
 
     render() {
-        return(<UserContentDetail data={this.chooseDetailData()} setDetailListRef={this.props.setRef} onScrollBottom={this.onScroll}/>);
+        return(
+            <div className={userMasterDetailStyles.userContentDetailWrapper}>
+                <UserContentDetail data={this.chooseDetailData()} setDetailListRef={this.props.setRef} onScrollBottom={this.onScroll}/>
+            </div>
+        );
     }
 }
 
