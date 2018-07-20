@@ -2,7 +2,8 @@
     display: grid;
     grid-template-columns: max-content auto;
     height: 100%;
-    width: 100%;
+    width: 1366px;
+    margin: auto;
 }
 
 /* THE STYLES FOR THE MASTER SIDE NAV FOR USER CONSOLE */
@@ -256,7 +257,7 @@
     grid-row: 2 / 3;
     height: 250px;
     display: grid;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto max-content;
 }
 
 .cardDescription {
@@ -295,7 +296,40 @@
 
 /* RESPONSIVE CLASSES */
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1366px) {
+    .userMasterDetailWrapper {
+        grid-template-columns: auto;
+        width: 100%;
+    }
+
+    .masterSideNav, .masterSideNavCollapsed {
+        height: auto;
+        width: 300px;
+        box-shadow: none;
+        position: fixed;
+        bottom: 0;
+        margin: 0px auto;
+        left: 0;
+        right: 0;
+        z-index: 5;
+    }
+
+    .sideNavList {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 0;
+    }
+    
+    .sideNavHeader, .sideNavHeaderCollapsed, .sideNavTitle, 
+    .sideNavTitleCollapsed, .sideNavTitle img, .sideNavTitleCollapsed img,
+    .footer, .sideNavTabText {
+        display: none;
+    }
+    
+    .sideNavTab, .sideNavTabCollapsed {
+        grid-template-columns: auto 0px;
+    }
+
     .toggleExpandIconExpanded, .toggleExpandIconCollapsed {
         display: none;
     }
