@@ -377,12 +377,14 @@ class UserContentMaster extends React.Component {
         this.state = {
             selected: sideNavConstants.SIDE_NAV_TAB_MY_ANIME,
             liClassStrings: liClassStartStrings,
-            iconClassStrings: iconClassStartStrings
+            iconClassStrings: iconClassStartStrings,
+            collapsed: false
         };
         
         this.onSideNavTabClick = this.onSideNavTabClick.bind(this);
         this.changeSelectedTabUI = this.changeSelectedTabUI.bind(this);
         this.setRef = this.setRef.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     setRef(node) {
@@ -396,17 +398,21 @@ class UserContentMaster extends React.Component {
             return;
         }
 
-        let newClassStringsArr = this.changeSelectedTabUI(targetName);
+        let newClassStringsArr = this.changeSelectedTabUI(targetName, this.state.collapsed);
 
         this.setState({
             selected: targetName,
             liClassStrings: newClassStringsArr[0],
-            iconClassStrings: newClassStringsArr[1]
+            iconClassStrings: newClassStringsArr[1],
+            collapsed: this.state.collapsed
         }, () => {this.detailListRef.scrollTo(0,0);});
     }
 
-    changeSelectedTabUI(selectedTabName) {
+    changeSelectedTabUI(selectedTabName, collapsed) {
         let defaultLiString = toMultiClassString(userMasterDetailStyles.sideNavTabInactive,userMasterDetailStyles.sideNavTab);
+        if (collapsed) {
+            defaultLiString = toMultiClassString(userMasterDetailStyles.sideNavTabInactive,userMasterDetailStyles.sideNavTabCollapsed);
+        }
         let liClassNewStrings = [defaultLiString, defaultLiString, defaultLiString];
         let iconClassNewStrings = [userMasterDetailStyles.myAnimeIcon, 
             userMasterDetailStyles.trendingIcon, 
@@ -437,25 +443,70 @@ class UserContentMaster extends React.Component {
         }
 
         iconClassNewStrings[activeIndx] = activeIconString;
-        liClassNewStrings[activeIndx] = toMultiClassString(userMasterDetailStyles.sideNavTabActive,userMasterDetailStyles.sideNavTab);
+        if (collapsed) {
+            liClassNewStrings[activeIndx] = toMultiClassString(userMasterDetailStyles.sideNavTabActive,userMasterDetailStyles.sideNavTabCollapsed);
+        }
+        else  {
+            liClassNewStrings[activeIndx] = toMultiClassString(userMasterDetailStyles.sideNavTabActive,userMasterDetailStyles.sideNavTab);
+        }
 
         return [liClassNewStrings, iconClassNewStrings];
     }
 
+    toggleCollapse() {
+        let newClassStringsArr = this.changeSelectedTabUI(this.state.selected, !this.state.collapsed);
+        this.setState({
+            selected: this.state.selected,
+            liClassStrings: newClassStringsArr[0],
+            iconClassStrings: newClassStringsArr[1],
+            collapsed: !this.state.collapsed
+        });
+    }
+
+    createSideNavLi(name, liClassNewStrings, iconClassNewStrings, textVisbilityClassString, onClickHandler, text) {
+    return (
+        <li key={name} name={name} className={liClassNewStrings} onClick={onClickHandler}>
+            <div name={name} className={toMultiClassString(iconClassNewStrings,userMasterDetailStyles.sideNavTabIcon)}></div>
+            <div name={name} className={toMultiClassString(userMasterDetailStyles.sideNavTabText,textVisbilityClassString)}>{text}</div>
+        </li>);
+    }
+
     render() {
+        //let expandedVisbilityStyles = {};
+        let expandedElementsClassString = '';
+        //let collapsedVisbilityStyles = {};
+        let collapsedElementsClassString = userMasterDetailStyles.hidden;
+        let sideNavClassString = userMasterDetailStyles.masterSideNav;
+        let sideNavHeaderClassString = userMasterDetailStyles.sideNavHeader;
+        let sideNavTitleClassString = userMasterDetailStyles.sideNavTitle;
+        if (this.state.collapsed) {
+            //expandedVisbilityStyles.display = 'none';
+            //collapsedVisbilityStyles.display = 'block';
+            expandedElementsClassString = userMasterDetailStyles.hidden;
+            collapsedElementsClassString = '';
+            sideNavClassString = userMasterDetailStyles.masterSideNavCollapsed;
+            sideNavHeaderClassString = userMasterDetailStyles.sideNavHeaderCollapsed;
+            sideNavTitleClassString = userMasterDetailStyles.sideNavTitleCollapsed;
+        }
+
         return(
             <div className={userMasterDetailStyles.userMasterDetailWrapper}>
-                <div className={userMasterDetailStyles.masterSideNav}>
-                    <img className={userMasterDetailStyles.sideNavHeader} src="https://media.giphy.com/media/b29IZK1dP4aWs/giphy.gif"/>
-                    <div className={userMasterDetailStyles.sideNavTitle}><img src={navLogo}/>Navigation</div>
+                <div className={sideNavClassString}>
+                    <img className={sideNavHeaderClassString} src="https://media.giphy.com/media/b29IZK1dP4aWs/giphy.gif"/>
+                    <div className={sideNavTitleClassString}><img src={navLogo}/><div className={expandedElementsClassString}>Navigation</div><div className={toMultiClassString(userMasterDetailStyles.toggleExpandIconExpanded,expandedElementsClassString)} onClick={this.toggleCollapse}></div></div>
+                    <div className={toMultiClassString(userMasterDetailStyles.toggleExpandIconCollapsed,collapsedElementsClassString)} onClick={this.toggleCollapse}></div>
                     <ul className={userMasterDetailStyles.sideNavList}> 
-                        <li name={sideNavConstants.SIDE_NAV_TAB_MY_ANIME} className={this.state.liClassStrings[0]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[0]}></div>My Animes</li>
-                        <li name={sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME} className={this.state.liClassStrings[1]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[1]}></div>Popular Animes</li>
-                        <li name={sideNavConstants.SIDE_NAV_TAB_NEW_ANIME} className={this.state.liClassStrings[2]} onClick={this.onSideNavTabClick}><div className={this.state.iconClassStrings[2]}></div>New Animes</li>
+                        {
+                            [
+                            this.createSideNavLi(sideNavConstants.SIDE_NAV_TAB_MY_ANIME,this.state.liClassStrings[0],this.state.iconClassStrings[0],expandedElementsClassString,this.onSideNavTabClick,'My Animes'),
+                            this.createSideNavLi(sideNavConstants.SIDE_NAV_TAB_POPULAR_ANIME,this.state.liClassStrings[1],this.state.iconClassStrings[1],expandedElementsClassString,this.onSideNavTabClick,'Popular Animes'),
+                            this.createSideNavLi(sideNavConstants.SIDE_NAV_TAB_NEW_ANIME,this.state.liClassStrings[2],this.state.iconClassStrings[2],expandedElementsClassString,this.onSideNavTabClick,'New Animes')
+                            ]
+                        }
                     </ul>
-                    <div className={userMasterDetailStyles.footer}>Some Copyright @ Shit 2018</div>
+                    <div className={toMultiClassString(userMasterDetailStyles.footer, expandedElementsClassString)}>Some Copyright @ Shit 2018</div>
                 </div>
-                <UserContentDetailContainer currTab={this.state.selected} myAnimeIds={[]} setRef={this.setRef}/>
+                <UserContentDetailContainer currTab={this.state.selected} myAnimeIds={[101004,100085,100483,21712,101432]} setRef={this.setRef}/>
             </div>
         );
     }

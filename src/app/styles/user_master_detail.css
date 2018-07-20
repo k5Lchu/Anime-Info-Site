@@ -1,11 +1,12 @@
 .userMasterDetailWrapper {
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: max-content auto;
     height: 100%;
     width: 100%;
 }
 
-/* The styles for master side nav for user console */
+/* THE STYLES FOR THE MASTER SIDE NAV FOR USER CONSOLE */
+
 .masterSideNav {
     height: 100%;
     margin: 0;
@@ -16,9 +17,22 @@
     position: relative;
 }
 
+.masterSideNavCollapsed {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 60px;
+    background-color: rgb(255, 100, 0);
+    box-shadow: 2px 0px 1px 0px #888888;
+}
+
 .sideNavHeader {
     width: 100%;
     margin-top: 60px;
+}
+
+.sideNavHeaderCollapsed {
+    display: none;
 }
 
 .sideNavList {
@@ -31,6 +45,14 @@
     font-size: 1.5em;
     display: grid;
     grid-template-columns: 1fr 3fr;
+    padding: 10px;
+}
+
+.sideNavTabCollapsed {
+    font-family: Trebuchet MS;
+    font-size: 1.5em;
+    display: grid;
+    grid-template-columns: auto 0px;
     padding: 10px;
 }
 
@@ -49,7 +71,7 @@
     color: black;
 }
 
-.sideNavList div {
+.sideNavTabIcon {
     width: 25px;
     height: 25px;
     background-size: cover;
@@ -100,14 +122,48 @@
     border-bottom: 1px solid rgb(255, 223, 155);
     color: rgb(255, 223, 155);
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 3fr 1fr;
     line-height: 40px;
 }
 
-.sideNavTitle img {
+.sideNavTitleCollapsed {
+    font-family: Trebuchet MS;
+    font-size: 1.5em;
+    margin: 15px 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(255, 223, 155);
+    color: rgb(255, 223, 155);
+    display: grid;
+    grid-template-columns: auto auto;
+    line-height: 40px;
+    padding-top: 60px;
+}
+
+.sideNavTitle img, .sideNavTitleCollapsed img {
     width: 40px;
     margin: auto;
     border-radius: 50%;
+}
+
+.toggleExpandIconExpanded {
+    width: 24px;
+    height: 24px;
+    margin: auto;
+    background-repeat: no-repeat;
+    background-image: url('../../public/images/chevron_left_white.png');
+}
+
+.toggleExpandIconCollapsed {
+    width: 24px;
+    height: 24px;
+    margin: auto;
+    margin-bottom: 30px;
+    background-repeat: no-repeat;
+    background-image: url('../../public/images/chevron_right_white.png');
+}
+
+.toggleExpandIconExpanded:hover, .toggleExpandIconCollapsed:hover {
+    cursor: pointer;
 }
 
 .footer {
@@ -120,7 +176,11 @@
     margin-bottom: 10px;
 }
 
-/* The styles for the detail portion of user console */
+.sideNavTabText {
+    width: 100%;
+}
+
+/* THE STYLES FOR THE DEATIL PORTION OF THE USER CONSOLE */
 
 .detailWrapper {
     width: 100%;
@@ -132,7 +192,8 @@
 
 .detailList {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, 440px);
+    justify-content: center;
 }
 
 .animeCardLinkContainer {
@@ -223,4 +284,19 @@
     padding: 10px 5px;
     color: #609CE1;
     width: 100%;
+}
+
+
+/* GENERAL CLASSES */
+
+.hidden {
+    display: none;
+}
+
+/* RESPONSIVE CLASSES */
+
+@media only screen and (max-width: 600px) {
+    .toggleExpandIconExpanded, .toggleExpandIconCollapsed {
+        display: none;
+    }
 }

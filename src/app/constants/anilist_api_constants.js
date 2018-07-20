@@ -42,7 +42,7 @@ module.exports = {
                 hasNextPage
                 perPage
               }
-              media (type: ANIME, sort: POPULARITY_DESC) {
+              media (type: ANIME, sort: POPULARITY_DESC, isAdult: false) {
                 id
                 title {
                   romaji
@@ -66,7 +66,7 @@ module.exports = {
             }
         }`,
     NEW_ANIME_WINTER_QUERY_STRING: 
-        `query ($page: Int, $perPage: Int, $seasonYear: Int) {
+        `query ($page: Int, $perPage: Int, $seasonYear: Int, isAdult: false) {
             Page (page: $page, perPage: $perPage) {
               pageInfo {
                 total
@@ -108,7 +108,7 @@ module.exports = {
                 hasNextPage
                 perPage
               }
-              media (type: ANIME, season: SPRING, seasonYear: $seasonYear, sort: TRENDING_DESC) {
+              media (type: ANIME, season: SPRING, seasonYear: $seasonYear, sort: TRENDING_DESC, isAdult: false) {
                 id
                 title {
                   romaji
@@ -141,7 +141,7 @@ module.exports = {
                 hasNextPage
                 perPage
               }
-              media (type: ANIME, season: SUMMER, seasonYear: $seasonYear, sort: TRENDING_DESC) {
+              media (type: ANIME, season: SUMMER, seasonYear: $seasonYear, sort: TRENDING_DESC, isAdult: false) {
                 id
                 title {
                   romaji
@@ -174,7 +174,7 @@ module.exports = {
                 hasNextPage
                 perPage
               }
-              media (type: ANIME, season: FALL, seasonYear: $seasonYear, sort: TRENDING_DESC) {
+              media (type: ANIME, season: FALL, seasonYear: $seasonYear, sort: TRENDING_DESC, isAdult: false) {
                 id
                 title {
                   romaji
