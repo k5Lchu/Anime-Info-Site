@@ -357,5 +357,12 @@
 
     .detailWrapper {
         padding-top: 30px;
+        right: 0px;
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    .animeCardLinkContainer {
+        width: 300px;
     }
 }
