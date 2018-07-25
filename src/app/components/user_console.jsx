@@ -511,16 +511,12 @@ class UserContentMaster extends React.Component {
     }
 
     render() {
-        //let expandedVisbilityStyles = {};
         let expandedElementsClassString = '';
-        //let collapsedVisbilityStyles = {};
         let collapsedElementsClassString = userMasterDetailStyles.hidden;
         let sideNavClassString = userMasterDetailStyles.masterSideNav;
         let sideNavHeaderClassString = userMasterDetailStyles.sideNavHeader;
         let sideNavTitleClassString = userMasterDetailStyles.sideNavTitle;
         if (this.state.collapsed) {
-            //expandedVisbilityStyles.display = 'none';
-            //collapsedVisbilityStyles.display = 'block';
             expandedElementsClassString = userMasterDetailStyles.hidden;
             collapsedElementsClassString = '';
             sideNavClassString = userMasterDetailStyles.masterSideNavCollapsed;

@@ -1,8 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter, Switch } from 'react-router-dom';
+
 
 import './styles/global.css';
 
-import ConsoleWrap from './components/user_console.jsx';
+import routes from './routes.js';
 
-ReactDOM.render(<ConsoleWrap />, document.getElementById("index"));
+ReactDOM.render(
+    <BrowserRouter>
+        <Switch>
+            {routes}
+        </Switch>
+    </BrowserRouter>
+    , document.getElementById("index")
+);
