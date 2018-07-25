@@ -1,6 +1,5 @@
 import React from 'react';
 
-import headerStyles from '../styles/header.css';
 import userMasterDetailStyles from '../styles/user_master_detail.css';
 
 import sideNavConstants from '../constants/user_console_constants.js';
@@ -9,171 +8,15 @@ import anilistApiConstants from '../constants/anilist_api_constants.js';
 import api from '../api/anilist_api.js';
 
 // importing the necessary image files
-import logoIcon from '../../public/images/logo.png';
-import homeIcon from '../../public/images/baseline_home_white_48dp.png';
-import defaultProfileIcon from '../../public/images/baseline_account_circle_white_48dp.png';
-import searchIcon from '../../public/images/baseline_search_white_48dp.png';
 import navLogo from '../../public/images/nav_logo.png';
-import mobileHeaderNavIcon from '../../public/images/menu_white.png';
+
+import AnimeCard from './anime_card.jsx';
+import ConsoleNavHeader from './console_nav_header.jsx';
 
 const toMultiClassString = (...classStrings) => {
     return classStrings.reduce((prev, curr) => {
         return prev + ' ' + curr;
     });
-};
-
-/*
- * Header componenets that serves as the nav bar for the user console
- */
-class ConsoleNavHeader extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            profileNavVisible: false,
-            mobileNavVisible: false
-        };
-
-        this.toggleProfileNav = this.toggleProfileNav.bind(this);
-        this.setRef = this.setRef.bind(this);
-        this.showMobileHeaderNav = this.showMobileHeaderNav.bind(this);
-        this.closeMobileHeaderNav = this.closeMobileHeaderNav.bind(this);
-    }
-
-    componentDidMount() {
-        document.addEventListener('mousedown', this.toggleProfileNav);
-    }
-    
-    componentWillUnmount() {
-        document.removeEventListener('mousedown', this.toggleProfileNav);
-    }
-
-    toggleProfileNav(e) {
-        if (this.profileIconRef && !this.profileIconRef.contains(e.target)) {
-            this.setState({
-                profileNavVisible: false,
-                mobileNavVisible: this.state.mobileNavVisible
-                
-            });
-        }
-        else {
-            this.setState({
-                profileNavVisible: !this.state.profileNavVisible,
-                mobileNavVisible: this.state.mobileNavVisible
-            });
-        }
-    }
-
-    setRef(node) {
-        this.profileIconRef = node;
-    }
-
-    showMobileHeaderNav() {
-        this.setState({
-            profileNavVisible: this.state.profileNavVisible,
-            mobileNavVisible: true
-        });
-    }
-
-    closeMobileHeaderNav() {
-        this.setState({
-            profileNavVisible: this.state.profileNavVisible,
-            mobileNavVisible: false
-        });
-    }
-
-    render() {
-        let profileNavVisibleStyle = {
-            display: 'none'
-        };
-
-        if (this.state.profileNavVisible) {
-            profileNavVisibleStyle.display = 'block';
-        }
-
-        let mobileNavVisibleClassString = headerStyles.hidden;
-        let mobileNavToggleClass = '';
-        if (this.state.mobileNavVisible) {
-            mobileNavVisibleClassString = '';
-            mobileNavToggleClass = headerStyles.hidden;
-        }
-
-        return(
-            <div className={headerStyles.wrapper}>
-                <div className={headerStyles.accentBar}></div>
-                <img className={toMultiClassString(headerStyles.mobileHeaderNavExpand, mobileNavToggleClass)} src={mobileHeaderNavIcon} onClick={this.showMobileHeaderNav}/>
-                <div className={toMultiClassString(headerStyles.innerWrapper, mobileNavVisibleClassString)}>
-                    <img className={headerStyles.logo} src={logoIcon}/>
-                    <div className={headerStyles.verticalSeperator}></div>
-                    <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.homeIcon)} src={homeIcon}/>
-                    <div className={headerStyles.profileNavAreaWrapper}>
-                        <img ref={this.setRef} className={toMultiClassString(headerStyles.interactIcons,headerStyles.profileIcon)} src={defaultProfileIcon}/>
-                        <div className={headerStyles.profileNavWrapper} style={profileNavVisibleStyle}>
-                            <ul className={headerStyles.profileNav}>
-                                <li purpose='settings'><div className={toMultiClassString(headerStyles.settingsIcon,headerStyles.profileNavIcons)}></div>Settings</li>
-                                <li purpose='logout'><div className={toMultiClassString(headerStyles.logoutIcon,headerStyles.profileNavIcons)}></div>Logout</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.searchIcon)} src={searchIcon}/>
-
-                    <div purpose='settings' className={toMultiClassString(headerStyles.settingsIconMobile,headerStyles.interactIcons)}></div>
-                    <div purpose='logout' className={toMultiClassString(headerStyles.logoutIconMobile,headerStyles.interactIcons)}></div>
-
-                    <div className={toMultiClassString(headerStyles.closeMobileHeader,headerStyles.interactIcons)} onClick={this.closeMobileHeaderNav}></div>
-
-                </div>
-            </div>
-        );
-    }
-};
-
-const AnimeCard = (props) => {
-
-    let secondsToTimeString = (timeSecondsUntil) => {
-        timeSecondsUntil = Number(timeSecondsUntil);
-        let d = Math.floor(timeSecondsUntil / (3600*24));
-        let h = Math.floor(timeSecondsUntil % (3600*24) / 3600);
-        let m = Math.floor(timeSecondsUntil % (3600*24) % 3600 / 60);
-
-        let dDisplay = d > 0 ? d + 'd ' : '';
-        let hDisplay = h > 0 ? h + 'hr ' : '';
-        let mDisplay = m > 0 ? m + 'm ' : '';
-        return dDisplay + hDisplay + mDisplay; 
-    };
-
-    let getNextEpisodeTimeUntilString = () => {
-        if (props.status === anilistApiConstants.STATUS_RELEASING && props.nextAiringEpisode.timeUntilAiring != undefined) {
-            return 'Ep ' + props.nextAiringEpisode.episode + ' - ' + secondsToTimeString(props.nextAiringEpisode.timeUntilAiring);
-        }
-        else {
-            return props.season + ' ' + props.startDate.year;
-        }
-    };
-
-    let preventDescriptionLink = (e) => {
-        e.preventDefault();
-    };
-
-    let displayGenres = () => {
-        if (props.genres.length > 0) {
-            return props.genres.reduce((prev, curr) => {return prev + ', ' + curr;});
-        }
-        return 'none';
-    };
-
-    return(
-        <a className={userMasterDetailStyles.animeCardLinkContainer} href={props.siteUrl} onClick={preventDescriptionLink}>
-            <div className={userMasterDetailStyles.animeCardContainer}>
-                <h4 className={userMasterDetailStyles.cardTitle}>{props.title.romaji}</h4>
-                <h5 className={userMasterDetailStyles.cardTime}>{getNextEpisodeTimeUntilString()}</h5>
-                <img className={userMasterDetailStyles.cardImage} src={props.coverImage.large}/>
-                <div className={userMasterDetailStyles.desciprtionGenreWrapper}>
-                    <p className={userMasterDetailStyles.cardDescription}>{props.description.replace(/<(?:.|\n)*?>/gm, '')}</p>
-                    <p className={userMasterDetailStyles.cardGenres}>{displayGenres()}</p>
-                </div>
-            </div>
-        </a>
-    );
 };
 
 class UserContentDetailContainer extends React.Component {
