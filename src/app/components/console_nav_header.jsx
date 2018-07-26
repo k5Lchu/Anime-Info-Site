@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import headerStyles from '../styles/header.css';
 
@@ -97,7 +98,9 @@ class ConsoleNavHeader extends React.Component {
                 <div className={toMultiClassString(headerStyles.innerWrapper, mobileNavVisibleClassString)}>
                     <img className={headerStyles.logo} src={logoIcon}/>
                     <div className={headerStyles.verticalSeperator}></div>
-                    <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.homeIcon)} src={homeIcon}/>
+                    <Link to='/' style={{margin: 'auto'}}>
+                        <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.homeIcon)} src={homeIcon}/>
+                    </Link>
                     <div className={headerStyles.profileNavAreaWrapper}>
                         <img ref={this.setRef} className={toMultiClassString(headerStyles.interactIcons,headerStyles.profileIcon)} src={defaultProfileIcon}/>
                         <div className={headerStyles.profileNavWrapper} style={profileNavVisibleStyle}>
@@ -107,7 +110,9 @@ class ConsoleNavHeader extends React.Component {
                             </ul>
                         </div>
                     </div>
-                    <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.searchIcon)} src={searchIcon}/>
+                    <Link to='/search' style={{margin: 'auto'}}>
+                        <img className={toMultiClassString(headerStyles.interactIcons,headerStyles.searchIcon)} src={searchIcon}/>
+                    </Link>
 
                     <div purpose='settings' className={toMultiClassString(headerStyles.settingsIconMobile,headerStyles.interactIcons)}></div>
                     <div purpose='logout' className={toMultiClassString(headerStyles.logoutIconMobile,headerStyles.interactIcons)}></div>

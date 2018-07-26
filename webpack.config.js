@@ -29,6 +29,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: "style-loader"
@@ -43,6 +44,14 @@ module.exports = {
                             minimize: true
                         }
                     }
+                ]
+            },
+            {
+                test: /\.css$/,
+                include: /node_modules/,
+                use: [
+                    {loader: "style-loader"},
+                    {loader: "css-loader"}
                 ]
             }
         ]
